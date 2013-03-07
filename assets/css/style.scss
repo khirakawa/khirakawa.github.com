@@ -4,8 +4,7 @@ $light-gray: #fdfdfd;
 $gray: #ccc;
 $dark-gray: #444;
 $darker-gray: #222;
-$bodyWidth: 660px;
-$contentSidePadding: 16px;
+$contentWidth: 660px;
 
 body{
 	background-color: $light-gray;
@@ -13,30 +12,21 @@ body{
 	font-size: 1.3125em;
 	line-height: 1.618em;
 	color: $dark-gray;
+	padding-top: 1.618em;
 }
 
-.content{
-	width: $bodyWidth;
+p, h1, h2 {
+	max-width: $contentWidth;
 	margin: 0 auto;
-}
-
-p, h1, h2{
-	padding:0 $contentSidePadding;
+	padding: 0 16px;
 }
 
 h1{
 	line-height: 1.1em;
 	color: $darker-gray;
 	font-size: 4.236em;
+	margin-bottom: 0.618em;
 }
-
-// h1:after{
-// 	@include background(linear-gradient(left, #eee 0%,#ccc 50%,#eee 100%));
-// 	height: 1px;
-// 	margin-top: 0.382em;
-// 	display: block;
-// 	content: "";
-// }
 
 h2{
 	font-size: 1.618em;
@@ -44,8 +34,27 @@ h2{
 	color: $darker-gray;
 }
 
+
+figure{
+	text-align: center;
+	margin: 2.618em 0;
+
+	img{
+		max-width: 1200px;
+		width: 100%;
+	}
+
+	figcaption {
+		font-size: 0.7em; // yes, I improvised.
+	}
+}
+
+a{
+	color: #da534f;
+}
+
 footer {
-	width: $bodyWidth;
+	max-width: $contentWidth;
 	margin: 2.618em auto;
 
 	.published-date{
