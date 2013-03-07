@@ -2,4 +2,13 @@
 layout: default
 ---
 
-<!-- Blog coming soon -->
+<div class="home">
+	<header>
+		<a href="https://alpha.app.net/6"><img src="/assets/images/profile.jpg"/></a>
+	</header>
+	<ul>
+	  {% for post in site.posts %}
+	    <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+	  {% endfor %}
+	</ul>
+</div>
