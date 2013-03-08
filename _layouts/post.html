@@ -2,7 +2,12 @@
 layout: default
 ---
 
-{{ content }}
-<footer>
-    <div class="published-date">{{ site.time | date: "%B %d, %Y" }}</div>
-</footer>
+<div class="post">
+  <header>
+    <a href="/"><img src="/assets/images/profile.jpg"/></a>
+  </header>
+  {{ content }}
+  <footer>
+      <div class="published-date">{{ site.time | date: "%B %d, %Y" }}</div>
+  </footer>
+</div>

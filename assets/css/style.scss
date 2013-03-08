@@ -51,6 +51,11 @@ figure{
 
 a{
 	color: #da534f;
+	@include transition(color 0.3s ease-in-out);
+}
+
+a:hover{
+	color: #ff2f29;
 }
 
 footer {
@@ -63,16 +68,29 @@ footer {
 	}
 }
 
+header{
+	text-align: center;
+	margin-bottom: 1.618em;
+
+	img{
+		border-radius: 20px;
+		@include transition(opacity 0.3s ease-in-out);
+	}
+}
+
+.post header{
+
+	a:hover img{
+		opacity: 1;
+	}
+
+	img{
+		opacity: 0.3;
+	}
+}
+
 .home{
 	text-align: center;
-
-	header{
-		margin-bottom: 1.618em;
-
-		img{
-			border-radius: 20px;
-		}
-	}
 
 	ul{
 		list-style: none;
