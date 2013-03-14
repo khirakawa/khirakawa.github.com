@@ -13,12 +13,21 @@ body{
 	line-height: 1.618em;
 	color: $dark-gray;
 	padding-top: 1.618em;
+	margin: 1em;
 }
 
-p, h1, h2, ul {
+p, h1, h2, h3, ul, ol, .highlight {
 	max-width: $contentWidth;
 	margin: 0 auto;
 	padding: 0 16px;
+}
+
+p, ul, ol, .highlight{
+	margin-bottom: 1.618em;
+}
+
+ol li, ul li {
+	margin-left: 2.618em;
 }
 
 h1{
@@ -31,17 +40,27 @@ h1{
 h2{
 	font-size: 1.618em;
 	margin-top: 1.618em;
+	margin-bottom: 0.618em;
 	color: $darker-gray;
 }
 
+h3{
+	font-style: italic;
+	font-weight: normal;
+	margin-bottom: 0.618em;
+}
 
 figure{
 	text-align: center;
 	margin: 2.618em 0;
 
 	img{
-		max-width: 1200px;
+		max-width: $contentWidth;
 		width: 100%;
+	}
+
+	img.large{
+		max-width: 1200px;
 	}
 
 	figcaption {
@@ -56,6 +75,22 @@ a{
 
 a:hover{
 	color: #ff2f29;
+}
+
+p > code, .highlight {
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	background-color: #f8f8f8 !important;
+}
+
+p > code {
+	padding: 3px 7px;
+}
+
+.highlight{
+	overflow-x: scroll;
+	font-size: 0.9em;
+	line-height: 1.2em;
 }
 
 footer {
@@ -94,5 +129,30 @@ header{
 
 	ul{
 		list-style: none;
+	}
+
+	ul li {
+		margin-left: 0;
+	}
+}
+
+.gist{
+	font-size: 0.618em;
+	line-height:1.618em;
+}
+
+/* Large desktop */
+@media (min-width: 1200px) { }
+
+/* Portrait tablet to landscape and desktop */
+@media (min-width: 768px) and (max-width: 979px) {  }
+
+/* Landscape phone to portrait tablet */
+@media (max-width: 767px) { }
+
+/* Landscape phones and down */
+@media (max-width: 480px) {
+	h1 {
+		font-size: 2.618em;
 	}
 }
