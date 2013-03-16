@@ -13,13 +13,13 @@ _A tale of how I built a water level sensor to monitor my bamboo's water supply.
 	<figcaption>My overgrown bamboo</figcaption>
 </figure>
 
-My bamboo’s dying.
+My bamboo is dying.
 
 I’ve had my bamboo plant ever since I started working at my current company. It’s a nice addition to my office desk, with it being green and all. The problem is, I always forget to water the plant. The yellowed, coiled up leaves are my only reminder. I have no idea how this plant has made it this far.
 
 ## Let’s Fix It
 
-There are many ways to “fix” this. One could simply set a recurring alarm on a phone every 3 or so weeks, as a reminder to water the bamboo. It’s the easiet route, but there’s certainly no fun involved.
+There are many ways to “fix” this. One could simply set a recurring alarm on a phone every 3 or so weeks, as a reminder to water the bamboo. It’s the easiest route, but there’s certainly no fun involved.
 
 What if the plant told me that it needed water? This [isn’t a new idea](http://www.botanicalls.com/), but I had an Arduino Uno collecting dust. I think it’s time to make use of it.
 
@@ -43,9 +43,9 @@ I read this [blog](http://lifeboatfarm.wordpress.com/2009/12/28/arduino-water-le
 	<figcaption>Design of water sensor</figcaption>
 </figure>
 
-The theory behind this is that when the when the sensor (the five 2.2kΩ resistors) is submerged into water, the sensor gets shorted resulting in a change in voltage.  By measuring this voltage change, we can calculate when to tweet.
+The theory behind this is that when the when the sensor (the five 2.2kΩ resistors) is submerged into water, the sensor gets shorted resulting in a change in voltage.  By measuring this voltage change, we can determine when water level is low.
 
-Sensor measurements are read in through analog sensor A0.  Power is programatically applied via pin 7 only when measurements are needed. This is to limit electrolysis.  More on this below.
+Sensor measurements are read in through analog sensor A0.  Power is programmatically applied via pin 7 only when measurements are needed. This is to limit electrolysis.
 
 And here’s the prototype:
 
@@ -54,7 +54,7 @@ And here’s the prototype:
 	<figcaption>The resistors are wrapped around the GND wire to make it more probe-like</figcaption>
 </figure>
 
-It works like a charm.  The raw data readings range from 540 (when it's dry) to around 350 (when its submerged in the mug).  The values don't mean anything.  All the software cares about is when the measurement has surpassed the IM_DYING_GIVE_ME_WATER threshold.  This value is set to around 520.
+It works like a charm.  The raw data readings range from 540 (when it's dry) to around 350 (when its submerged in water).  The values don't mean anything.  All the software cares about is when the measurement has surpassed the IM_DYING_GIVE_ME_WATER threshold.  This value is set to 520.
 
 ### Software
 
@@ -62,7 +62,7 @@ I wrote a node.js script that interfaces with the Arduino to collect readings fr
 
 The node.js script uses [duino](https://github.com/ecto/duino).  Its a neat, lightweight framework for working with Arduinos in node.js. As per their instructions, I've uploaded the `src/du.ino` sketch onto my Arduino.  Now I can operate the Arduino with javascript. Awesome.
 
-The water sensor code is in `lib/sensor.js`.  Inside the module you'll find the `WaterLevelSensor` constructor.  When instantiated, this object will create a new `arduino.Board` object at a baudrate of 9600, set up the analog sensor at pin A0, and set the pin mode of pin 7 to 'OUT'.  Pin 7 is used to toggle the power to the sensor.  Here's the code.
+The water sensor code is in `lib/sensor.js`.  Inside the module you'll find the `WaterLevelSensor` class.  When instantiated, this object will create a new `arduino.Board` object at a baudrate of 9600, set up the analog sensor at pin A0, and set the pin mode of pin 7 to 'OUT'.  Pin 7 is used to toggle the power to the sensor.  Here's the code.
 
 {% highlight javascript linenos=table %}
 
@@ -109,7 +109,7 @@ util.inherits(WaterLevelSensor, events.EventEmitter);
 
 {% endhighlight %}
 
-Finally, it defines the measure method.
+Finally, it defines the measure method.  The code powers the sensor by setting pin 7 to HIGH and then takes the mean average of five measurements.  The final value is passed to a callback.  Lastly, power pin (7) is set to LOW to power off the sensor.  This is important because we don't want DC current to continuously flow through the resistors in the water and cause corrosion via electrolysis.
 
 {% highlight javascript linenos=table %}
 
@@ -142,3 +142,36 @@ WaterLevelSensor.prototype.measure = function (callback) {
 };
 
 {% endhighlight %}
+
+Here's an example of how the `WaterLevelSensor` object is used.
+
+{% highlight javascript linenos=table %}
+
+var sensor = new WaterLevelSensor();
+
+// on ready state
+sensor.on('ready', function () {
+  setInterval(function(){
+    sensor.measure(function (value) {
+      // If the value exceeds threshold, tweet.
+      if (value > sensor.IM_DYING_THRESHOLD) {
+        // tweet it
+      }
+    });
+  }, 300000); // measure every 5 minutes
+});
+
+{% endhighlight %}
+
+There you have it.  A homemade Botanicalls made from a bunch of resistors, jumper wires, an Arduino, and node.js.
+
+<figure>
+	<img src="/assets/images/water-me-please-final.jpg">
+	<figcaption>Water level sensor in action</figcaption>
+</figure>
+
+## Next Steps
+
+Although the code does its best to limit corrosion, the resistors are still exposed to the elements and will naturally corrode.  Unfortunately, the resistors on my sensor have already rusted due to extensive testing of the sensor (still works though!).  An alternative method would be to use ultra-sound sensing or capacitive sensing.  That'll be a topic worthy of its own project.  For now, I'm happy with what I've made.
+
+Happy coding!
