@@ -108,7 +108,7 @@ header{
 	margin-bottom: 1.618em;
 
 	img{
-		border-radius: 20px;
+		border-radius: 100%;
 		@include transition(opacity 0.3s ease-in-out);
 	}
 }
