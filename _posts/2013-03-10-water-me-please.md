@@ -64,7 +64,7 @@ The node.js script uses [duino](https://github.com/ecto/duino).  Its a neat, lig
 
 The water sensor code is in `lib/sensor.js`.  Inside the module you'll find the `WaterLevelSensor` class.  When instantiated, this object will create a new `arduino.Board` object at a baudrate of 9600, set up the analog sensor at pin A0, and set the pin mode of pin 7 to 'OUT'.  Pin 7 is used to toggle the power to the sensor.  Here's the code.
 
-{% highlight javascript linenos=table %}
+{% highlight javascript %}
 
 // our water level sensor
 var WaterLevelSensor = function (options) {
@@ -102,7 +102,7 @@ var WaterLevelSensor = function (options) {
 
 In order for the object to emit an event on the ready state, it must inherit `events.EventEmitter`.
 
-{% highlight javascript linenos=table %}
+{% highlight javascript %}
 
 // make it emitterable
 util.inherits(WaterLevelSensor, events.EventEmitter);
@@ -111,7 +111,7 @@ util.inherits(WaterLevelSensor, events.EventEmitter);
 
 Finally, it defines the measure method.  The code powers the sensor by setting pin 7 to HIGH and then takes the mean average of five measurements.  The final value is passed to a callback.  Lastly, power pin (7) is set to LOW to power off the sensor.  This is important because we don't want DC current to continuously flow through the resistors in the water and cause corrosion via electrolysis.
 
-{% highlight javascript linenos=table %}
+{% highlight javascript %}
 
 // measures for 5 reads and calls callback with average value
 WaterLevelSensor.prototype.measure = function (callback) {
@@ -145,7 +145,7 @@ WaterLevelSensor.prototype.measure = function (callback) {
 
 Here's an example of how the `WaterLevelSensor` object is used.
 
-{% highlight javascript linenos=table %}
+{% highlight javascript %}
 
 var sensor = new WaterLevelSensor();
 
