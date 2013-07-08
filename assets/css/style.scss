@@ -125,7 +125,6 @@ header{
 }
 
 .home{
-	text-align: center;
 
 	ul{
 		list-style: none;
@@ -139,6 +138,23 @@ header{
 .gist{
 	font-size: 0.618em;
 	line-height:1.618em;
+}
+
+footer {
+	text-align: center;
+}
+
+.feed {
+
+	&:hover img{
+		opacity: 0.5;
+	}
+
+	img{
+		height: 20px;
+		opacity: 0.2;
+		@include transition(opacity 0.3s ease-in-out);
+	}
 }
 
 /* Large desktop */
