@@ -9,7 +9,7 @@ title: Water Me, Please!
 _A tale of how I built a water level sensor to monitor my bamboo's water supply.  When water is depleted, it tweets 'WATER ME FOOL'._
 
 <figure>
-	<img src="/assets/images/water-me-please-bamboo.jpg">
+	<img src="{{ site.url }}/assets/images/water-me-please-bamboo.jpg">
 	<figcaption>My overgrown bamboo</figcaption>
 </figure>
 
@@ -39,7 +39,7 @@ Here's how I implemented it.
 I read this [blog](http://lifeboatfarm.wordpress.com/2009/12/28/arduino-water-level-gauge/) and used their design for the water level sensor. For my design, I’m using one 10kΩ and five 2.2kΩ resistors in series. Here’s the schematic drawing:
 
 <figure>
-	<img src="/assets/images/water-me-please-schematic.png">
+	<img src="{{ site.url }}/assets/images/water-me-please-schematic.png">
 	<figcaption>Design of water sensor</figcaption>
 </figure>
 
@@ -50,7 +50,7 @@ Sensor measurements are read in through analog sensor A0.  Power is programmatic
 And here’s the prototype:
 
 <figure>
-	<img src="/assets/images/water-me-please-prototype.jpg">
+	<img src="{{ site.url }}/assets/images/water-me-please-prototype.jpg">
 	<figcaption>The resistors are wrapped around the GND wire to make it more probe-like</figcaption>
 </figure>
 
@@ -166,7 +166,7 @@ sensor.on('ready', function () {
 There you have it.  A homemade Botanicalls made from a bunch of resistors, jumper wires, an Arduino, and node.js.
 
 <figure>
-	<img src="/assets/images/water-me-please-final.jpg">
+	<img src="{{ site.url }}/assets/images/water-me-please-final.jpg">
 	<figcaption>Water level sensor in action</figcaption>
 </figure>
 

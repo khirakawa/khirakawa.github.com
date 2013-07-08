@@ -9,7 +9,7 @@ title: One Way RF Communication with Arduino and Node
 _Here I will document how I put together a node controlled RF receiver and transmitter using relatively inexpensive RF parts and [a fork](https://github.com/khirakawa/duino) of [ecto's duino framework](https://github.com/ecto/duino)._
 
 <figure>
-	<img src="/assets/images/rfduino-setup.jpg">
+	<img src="{{ site.url }}/assets/images/rfduino-setup.jpg">
 	<figcaption>Arduino UNO with WRL-10532 RF Link Receiver</figcaption>
 </figure>
 
@@ -20,14 +20,14 @@ For a recent side project, I needed to wirelessly send data from one Arduino to 
 First things first, I bought an [RF link receiver](https://www.sparkfun.com/products/10532) and [transmitter](https://www.sparkfun.com/products/10534) from SparkFun for a total cost of less than $10.  Here's the schematic drawing of the receiver I wired up.
 
 <figure>
-	<img src="/assets/images/rfduino-receiver-schematic.png">
+	<img src="{{ site.url }}/assets/images/rfduino-receiver-schematic.png">
 	<figcaption>WRL-10532 RF Link Receiver wired to data pin 2 of Arduino</figcaption>
 </figure>
 
 Here's the schematic of the transmitter.  You can optionally attach a wire to the right-most pin to extend the antenna for more reliable transmission.  Same goes for the receiver above.
 
 <figure>
-	<img src="/assets/images/rfduino-transmitter-schematic.png">
+	<img src="{{ site.url }}/assets/images/rfduino-transmitter-schematic.png">
 	<figcaption>WRL-10534 RF Link Transmitter wired to data pin 3 of Lilypad Arduino</figcaption>
 </figure>
 
