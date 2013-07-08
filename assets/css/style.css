@@ -93,16 +93,28 @@ header {
 .post header img {
   opacity: 0.3; }
 
-.home {
-  text-align: center; }
-  .home ul {
-    list-style: none; }
-  .home ul li {
-    margin-left: 0; }
+.home ul {
+  list-style: none; }
+.home ul li {
+  margin-left: 0; }
 
 .gist {
   font-size: 0.618em;
   line-height: 1.618em; }
+
+footer {
+  text-align: center; }
+
+.feed:hover img {
+  opacity: 0.5; }
+.feed img {
+  height: 20px;
+  opacity: 0.2;
+  -webkit-transition: opacity 0.3s ease-in-out;
+  -moz-transition: opacity 0.3s ease-in-out;
+  -ms-transition: opacity 0.3s ease-in-out;
+  -o-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out; }
 
 /* Large desktop */
 /* Portrait tablet to landscape and desktop */
