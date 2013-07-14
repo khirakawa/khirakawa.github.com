@@ -71,11 +71,11 @@ p > code {
   line-height: 1.2em; }
 
 footer {
+  text-align: center;
   max-width: 660px;
   margin: 2.618em auto; }
   footer .published-date {
-    text-align: center;
-    margin-top: 1.618em; }
+    margin: 1.618em 0; }
 
 header {
   text-align: center;
@@ -101,9 +101,6 @@ header {
 .gist {
   font-size: 0.618em;
   line-height: 1.618em; }
-
-footer {
-  text-align: center; }
 
 .feed:hover img {
   opacity: 0.5; }

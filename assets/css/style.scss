@@ -94,12 +94,12 @@ p > code {
 }
 
 footer {
+	text-align: center;
 	max-width: $contentWidth;
 	margin: 2.618em auto;
 
 	.published-date{
-		text-align: center;
-		margin-top: 1.618em;
+		margin: 1.618em 0;
 	}
 }
 
@@ -138,10 +138,6 @@ header{
 .gist{
 	font-size: 0.618em;
 	line-height:1.618em;
-}
-
-footer {
-	text-align: center;
 }
 
 .feed {
