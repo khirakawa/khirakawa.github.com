@@ -113,6 +113,11 @@ header {
   -o-transition: opacity 0.3s ease-in-out;
   transition: opacity 0.3s ease-in-out; }
 
+.post-date {
+  display: inline-block;
+  width: 120px;
+  text-align: right; }
+
 /* Large desktop */
 /* Portrait tablet to landscape and desktop */
 /* Landscape phone to portrait tablet */
