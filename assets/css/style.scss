@@ -65,6 +65,8 @@ figure{
 
 	figcaption {
 		font-size: 0.7em; // yes, I improvised.
+		max-width: $contentWidth;
+		margin: 0 auto;
 	}
 }
 

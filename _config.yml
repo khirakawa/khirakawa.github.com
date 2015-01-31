@@ -1,6 +1,8 @@
 permalink: /:title
-pygments: true
+highlighter: pygments
 url: http://kenhirakawa.com
 author:
   name: Ken Hirakawa
   email: k.hirakawa88@gmail.com
+scholar:
+  style: ieee
