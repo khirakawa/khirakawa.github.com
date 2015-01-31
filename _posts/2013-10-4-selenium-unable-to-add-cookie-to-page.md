@@ -2,6 +2,7 @@
 layout: post
 title: Selenium - Unable to add cookie to page
 comments: true
+category: posts
 ---
 
 # Selenium - Unable to add cookie to page

@@ -2,6 +2,7 @@
 layout: post
 title: Water Me, Please!
 comments: true
+category: posts
 ---
 
 

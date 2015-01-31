@@ -2,6 +2,7 @@
 layout: post
 title: Load Disqus on localhost
 comments: true
+category: posts
 ---
 
 # Load Disqus on localhost

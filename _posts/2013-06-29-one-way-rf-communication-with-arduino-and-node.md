@@ -2,6 +2,7 @@
 layout: post
 title: One Way RF Communication with Arduino and Node
 comments: true
+category: posts
 ---
 
 
