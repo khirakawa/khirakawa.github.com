@@ -120,6 +120,9 @@ header {
   width: 120px;
   text-align: right; }
 
+.bibliography {
+  font-size: 0.7em; }
+
 /* Large desktop */
 /* Portrait tablet to landscape and desktop */
 /* Landscape phone to portrait tablet */
