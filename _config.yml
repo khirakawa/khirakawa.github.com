@@ -6,3 +6,5 @@ author:
   email: k.hirakawa88@gmail.com
 scholar:
   style: ieee
+exclude:
+  - 'node_modules'
