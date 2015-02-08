@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+	<head>
+	  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	  <title>One Way RF Communication with Arduino and Node</title>
+	  <meta name="author" content="Ken Hirakawa" />
+
+	  <meta name=viewport content="width=device-width, initial-scale=1">
+	  <link rel="alternate" type="application/atom+xml" title="" href="http://kenhirakawa.com/atom.xml">
+	  <link rel="stylesheet" href="/assets/css/style.css" type="text/css" />
+	  <link rel="stylesheet" href="/assets/css/syntax.css" type="text/css" />
+	</head>
+	<body>
+	  <div class="post">
+  <header>
+    <a href="/"><img src="/assets/images/profile.jpg"/></a>
+  </header>
+  <h1 id="one-way-rf-communication-with-arduino-and-node">One Way RF Communication with Arduino and Node</h1>
+
+<p><em>Here I will document how I put together a node controlled RF receiver and transmitter using relatively inexpensive RF parts and <a href="https://github.com/khirakawa/duino">a fork</a> of <a href="https://github.com/ecto/duino">ecto’s duino framework</a>.</em></p>
+
+<figure>
+	<img src="http://kenhirakawa.com/assets/images/rfduino-setup.jpg" />
+	<figcaption>Arduino UNO with WRL-10532 RF Link Receiver</figcaption>
+</figure>
+
+<p>For a recent side project, I needed to wirelessly send data from one Arduino to another, and have the receiver do some data processing via node.  I ended up using a pair of Wenshing RF receivers / transmitters to do the wireless communication as they were inexpensive and easy to use.  On the software side, I used a forked version of ecto’s duino framework to interface with the Arduinos and support RF communication.  If you’re in need of building something similar, read on!</p>
+
+<h2 id="lets-build-it">Let’s Build It</h2>
+
+<p>First things first, I bought an <a href="https://www.sparkfun.com/products/10532">RF link receiver</a> and <a href="https://www.sparkfun.com/products/10534">transmitter</a> from SparkFun for a total cost of less than $10.  Here’s the schematic drawing of the receiver I wired up.</p>
+
+<figure>
+	<img src="http://kenhirakawa.com/assets/images/rfduino-receiver-schematic.png" />
+	<figcaption>WRL-10532 RF Link Receiver wired to data pin 2 of Arduino</figcaption>
+</figure>
+
+<p>Here’s the schematic of the transmitter.  You can optionally attach a wire to the right-most pin to extend the antenna for more reliable transmission.  Same goes for the receiver above.</p>
+
+<figure>
+	<img src="http://kenhirakawa.com/assets/images/rfduino-transmitter-schematic.png" />
+	<figcaption>WRL-10534 RF Link Transmitter wired to data pin 3 of Lilypad Arduino</figcaption>
+</figure>
+
+<h2 id="rfduino">[RF]Duino</h2>
+
+<p>For all my Arduino projects, I’ve been using ecto’s <a href="https://github.com/ecto/duino">duino framework</a>.  It’s plain simple and easy to use.  Unfortunately, it doesn’t support RF communication, so I decided to fork it and write my own <a href="https://github.com/khirakawa/duino">library</a>.  This library supports both receiving and transmitting data via <code>RFReceiver</code> and <code>RFTransmitter</code> classes.</p>
+
+<p>The first thing you’ll want to do is install the framework as a node module to your project (assuming, you already have a node program created):</p>
+
+<p><code>npm install git://github.com/khirakawa/duino.git</code></p>
+
+<p>Note that this flavor of duino replaces the servo module with the RF modules, so if you’re looking to use both, my fork won’t do.</p>
+
+<p>Next, upload the framework’s Arduino sketch located at <code>node_modules/duino/src/du/du.ino</code> to your Arduino.  The same sketch should be uploaded to both your receiver board and transmitter board.  This program issues commands to the RF receiver / transmitter on behalf of your node app.</p>
+
+<p>That’s it! Preparation done.</p>
+
+<p>You can now transmit data by doing:</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">arduino</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;duino&#39;</span><span class="p">),</span>
+    <span class="nx">board</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">arduino</span><span class="p">.</span><span class="nx">Board</span><span class="p">();</span>
+
+<span class="nx">board</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;ready&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+
+  <span class="kd">var</span> <span class="nx">rfTransmitter</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">arduino</span><span class="p">.</span><span class="nx">RFTransmitter</span><span class="p">({</span>
+    <span class="nx">board</span><span class="o">:</span> <span class="nx">board</span><span class="p">,</span>
+    <span class="nx">pin</span><span class="o">:</span> <span class="s1">&#39;03&#39;</span>
+  <span class="p">});</span>
+
+  <span class="nx">rfTransmitter</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s2">&quot;hey there delilah&quot;</span><span class="p">);</span>
+<span class="p">});</span></code></pre></div>
+
+<p>And receive it with:</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">arduino</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;duino&#39;</span><span class="p">),</span>
+    <span class="nx">board</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">arduino</span><span class="p">.</span><span class="nx">Board</span><span class="p">();</span>
+
+<span class="nx">board</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;ready&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+
+  <span class="kd">var</span> <span class="nx">rfReceiver</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">arduino</span><span class="p">.</span><span class="nx">RFReceiver</span><span class="p">({</span>
+    <span class="nx">board</span><span class="o">:</span> <span class="nx">board</span><span class="p">,</span>
+    <span class="nx">pin</span><span class="o">:</span> <span class="s1">&#39;02&#39;</span>
+  <span class="p">});</span>
+
+  <span class="nx">rfReceiver</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;read&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span></code></pre></div>
+
+<p>The library does impose a hard limit of 26 characters for a single transmission.  If you need to send more, simply call <code>rfTransmitter.send</code> multiple times, sequentially.
+For more information on other available commands, consult ecto’s <a href="https://github.com/ecto/duino#libraries">documentation</a>.</p>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>I had to remove the servo module from duino because the <code>Servo.h</code> include in the <code>du.ino</code> sketch conflicted with the <code>VirtualWire.h</code> library used for RF communication.  Future versions will have this fixed.</p>
+
+<p>If you need an even cheaper, smaller, and more reliable wireless Arduino board, I would highly suggest purchasing an <a href="http://www.rfduino.com/shop.html">RFDuino</a> made by OpenSourceRF.  It’s quite a remarkable piece technology and opens up a ton of new possibilities.  I can’t wait for my RFDuino to arrive!  Until then though, what I’ve outlined above will suffice =).</p>
+
+  <footer>
+		<div class="published-date">June 29, 2013</div>
+	  
+		<div id="disqus_thread"></div>
+		<script type="text/javascript">
+	        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+	        var disqus_shortname = 'kenhirakawa'; // required: replace example with your forum shortname
+
+	        // so that comments load on localhost
+	        var disqus_url = 'http://kenhirakawa.com/one-way-rf-communication-with-arduino-and-node';
+
+
+	        /* * * DON'T EDIT BELOW THIS LINE * * */
+	        (function() {
+	            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	        })();
+	    </script>
+	    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+	    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+	  
+  </footer>
+</div>
+
+
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-39116079-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+	</body>
+</html>

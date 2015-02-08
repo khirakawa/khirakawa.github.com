@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+	<head>
+	  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	  <title>Nap Time</title>
+	  <meta name="author" content="Ken Hirakawa" />
+
+	  <meta name=viewport content="width=device-width, initial-scale=1">
+	  <link rel="alternate" type="application/atom+xml" title="" href="http://kenhirakawa.com/atom.xml">
+	  <link rel="stylesheet" href="/assets/css/style.css" type="text/css" />
+	  <link rel="stylesheet" href="/assets/css/syntax.css" type="text/css" />
+	</head>
+	<body>
+	  <div class="post">
+  <header>
+    <a href="/"><img src="/assets/images/profile.jpg"/></a>
+  </header>
+  <h1 id="nap-time">Nap Time</h1>
+
+<p>Lilypad Arduinos are awesome because they are wearable.  I bought one almost 8 months ago, but never ended up doing anything with it other than <a href="http://kenhirakawa.com/one-way-rf-communication-with-arduino-and-node/">build an RFDuino</a>.  To give it its due diligence (and not have it collect dust), I decided to build a simple eye mask with a built-in alarm clock for power napping.  After all, research has shown many times over that power naps can <a href="http://io9.com/the-science-behind-power-naps-and-why-theyre-so-damne-1401366016">boost productivity, creativity, well-being, learning, and much more</a>.</p>
+
+<figure>
+	<img src="http://kenhirakawa.com/assets/images/nap-time-final.jpg" />
+	<figcaption>My poor job at sewing</figcaption>
+</figure>
+
+<p>Here’s how it works.  Put on the eye mask, nap for 10 minutes, and let the mask vibrate to wake you up.  It has a tri-color LED that will start pulsing while it’s on. To turn off the alarm, click the button board or simply turn off the Lilypad Arduino altogether.  It’s dead simple, yet super effective.</p>
+
+<h2 id="i-want-one">I Want One</h2>
+
+<p>Here’s what you’ll need.</p>
+
+<ol>
+  <li>Lilypad Arduino</li>
+  <li>Lilypad Buzzer</li>
+  <li>Lilypad Tri-color LED</li>
+  <li>Lilypad Button Board</li>
+  <li>LiPo Battery</li>
+  <li>Conductive threads and a needle</li>
+  <li>Nice, comfy eye mask</li>
+</ol>
+
+<p>You can get all items except the eye mask by purchasing a <a href="https://www.sparkfun.com/products/11261">ProtoSnap Development Kit</a>.  The eye mask I purchased can be found on <a href="http://www.amazon.com/Dream-Zone--Earth-Therapeutics-Sleep/dp/B000JE2C9Y/ref=sr_1_3?ie=UTF8&amp;qid=1383798238&amp;sr=8-3&amp;keywords=eyemask">Amazon</a>.</p>
+
+<p>Assuming you have your <a href="http://arduino.cc/en/Guide/HomePage#.UwKTLEJdUzF">Arduino development environment set</a>, the first thing you’ll want to do is install <a href="http://playground.arduino.cc/Code/Timer#Installation">Timer</a>. It’s a simple timing utility library that our code will use to keep track of time. Installation instructions can be found <a href="http://playground.arduino.cc/Code/Timer#Installation">here</a>.</p>
+
+<p>Next, grab the .ino source file from my <a href="https://github.com/khirakawa/power-napper/blob/master/src/nap.ino">github repo</a> and upload it to your Lilypad.</p>
+
+<p>Finally, wire your components using the schematic below.  I recommend using banana clips first (don’t sew yet).</p>
+
+<figure>
+	<img src="http://kenhirakawa.com/assets/images/nap-time-lilypad-schematic.png" />
+	<figcaption>Schematic of Lilypad Arduino connected to a buzzer, tri-color LED, and a button</figcaption>
+</figure>
+
+<p>When you turn on your Lilypad you should immediately see the LED glow green.  After 10 minutes the buzzer should start to vibrate.</p>
+
+<p>Once you know that it’s working, sew your components onto your eye mask. Make sure to keep the conductive thread from touching each other, or you’ll be left with a shorted circuit and a big, big frown.</p>
+
+<p>That’s it. Now go take a nap!</p>
+
+  <footer>
+		<div class="published-date">February 17, 2014</div>
+	  
+		<div id="disqus_thread"></div>
+		<script type="text/javascript">
+	        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+	        var disqus_shortname = 'kenhirakawa'; // required: replace example with your forum shortname
+
+	        // so that comments load on localhost
+	        var disqus_url = 'http://kenhirakawa.com/nap-time';
+
+
+	        /* * * DON'T EDIT BELOW THIS LINE * * */
+	        (function() {
+	            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	        })();
+	    </script>
+	    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+	    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+	  
+  </footer>
+</div>
+
+
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-39116079-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+	<head>
+	  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	  <title>Selenium - Unable to add cookie to page</title>
+	  <meta name="author" content="Ken Hirakawa" />
+
+	  <meta name=viewport content="width=device-width, initial-scale=1">
+	  <link rel="alternate" type="application/atom+xml" title="" href="http://kenhirakawa.com/atom.xml">
+	  <link rel="stylesheet" href="/assets/css/style.css" type="text/css" />
+	  <link rel="stylesheet" href="/assets/css/syntax.css" type="text/css" />
+	</head>
+	<body>
+	  <div class="post">
+  <header>
+    <a href="/"><img src="/assets/images/profile.jpg"/></a>
+  </header>
+  <h1 id="selenium---unable-to-add-cookie-to-page">Selenium - Unable to add cookie to page</h1>
+
+<p>Selenium can be a pain in the butt sometimes.  If you are having trouble running Selenium tests on IE9 because of an <code>Unable to add cookie to page</code> error, try the following:</p>
+
+<ol>
+  <li>Go open Internet Explorer</li>
+  <li>Open internet options</li>
+  <li>Go to the Programs tab</li>
+  <li>Amass all the courage you have to set IE as default browser</li>
+</ol>
+
+<p>That should hopefully fix it.</p>
+
+<p>The root cause is most likely related to this <a href="https://code.google.com/p/selenium/issues/detail?id=4307">closed bug</a>. Essentially, selenium looks for a registry key to determine if the page is in HTML.  If it fails to find the registry key (for some reason), selenium will spit out the error above.</p>
+
+<p>Note, I’m running selenium server 2.32 with IEDriver 2.33.</p>
+
+<p>FWIW.</p>
+
+  <footer>
+		<div class="published-date">October 04, 2013</div>
+	  
+		<div id="disqus_thread"></div>
+		<script type="text/javascript">
+	        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+	        var disqus_shortname = 'kenhirakawa'; // required: replace example with your forum shortname
+
+	        // so that comments load on localhost
+	        var disqus_url = 'http://kenhirakawa.com/selenium-unable-to-add-cookie-to-page';
+
+
+	        /* * * DON'T EDIT BELOW THIS LINE * * */
+	        (function() {
+	            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	        })();
+	    </script>
+	    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+	    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+	  
+  </footer>
+</div>
+
+
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-39116079-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+	<head>
+	  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	  <title>Load Disqus on localhost</title>
+	  <meta name="author" content="Ken Hirakawa" />
+
+	  <meta name=viewport content="width=device-width, initial-scale=1">
+	  <link rel="alternate" type="application/atom+xml" title="" href="http://kenhirakawa.com/atom.xml">
+	  <link rel="stylesheet" href="/assets/css/style.css" type="text/css" />
+	  <link rel="stylesheet" href="/assets/css/syntax.css" type="text/css" />
+	</head>
+	<body>
+	  <div class="post">
+  <header>
+    <a href="/"><img src="/assets/images/profile.jpg"/></a>
+  </header>
+  <h1 id="load-disqus-on-localhost">Load Disqus on localhost</h1>
+
+<p>Do you get a <code>We were unable to load Disqus</code> error when loading Disqus on localhost?  The <a href="https://www.google.com/search?q=load+disqus+on+localhost">top Google results</a> will tell you that you need to enable the following flag in <code>&lt;head&gt;</code>:</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">disqus_developer</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// this would set it to developer mode</span></code></pre></div>
+
+<p>Unfortunately, I had no luck with such flag.  I can’t find it in any of Disqus’s documentation either, so my bet is that the flag was deprecated.</p>
+
+<p>You can instead set the <code>disqus_url</code> config param to point to the correct site URL.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// jekyll syntax.</span>
+<span class="c1">// This evaluates to http://kenhirakawa.com/load-disqus-on-localhost</span>
+<span class="c1">// for this page</span>
+<span class="kd">var</span> <span class="nx">disqus_url</span> <span class="o">=</span> <span class="s1">&#39;{{ site.url }}{{ page.url }}&#39;</span><span class="p">;</span></code></pre></div>
+
+<p>Now when you load your site via localhost, Disqus will match the <code>disqus_url</code> param with your registered site URL.  If they match, Disqus will load. If you leave the parameter undefined, the script will use <code>window.location.href</code> instead, which evaluates to ‘localhost’.  Obviously, ‘localhost’ does not match your site URL, which explains why Disqus didn’t load on localhost in the first place.</p>
+
+<p>One more thing that made me trip was the website URL format under the Site Identity settings.  I had it set to <code>http://www.kenhirakawa.com</code>, when it should have been just <code>http://kenhirakawa.com</code>.  The syntax is documented <a href="http://help.disqus.com/customer/portal/articles/472007-i-m-receiving-the-message-%22we-were-unable-to-load-disqus-%22">here</a>, but I’d wish they’d just client-side validate the field.</p>
+
+<p>Hope this helps anyone having trouble loading Disqus on localhost!</p>
+
+  <footer>
+		<div class="published-date">July 14, 2013</div>
+	  
+		<div id="disqus_thread"></div>
+		<script type="text/javascript">
+	        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+	        var disqus_shortname = 'kenhirakawa'; // required: replace example with your forum shortname
+
+	        // so that comments load on localhost
+	        var disqus_url = 'http://kenhirakawa.com/load-disqus-on-localhost';
+
+
+	        /* * * DON'T EDIT BELOW THIS LINE * * */
+	        (function() {
+	            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	        })();
+	    </script>
+	    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+	    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+	  
+  </footer>
+</div>
+
+
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-39116079-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+	</body>
+</html>

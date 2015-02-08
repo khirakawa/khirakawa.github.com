@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+	<head>
+	  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	  <title>Water Me, Please!</title>
+	  <meta name="author" content="Ken Hirakawa" />
+
+	  <meta name=viewport content="width=device-width, initial-scale=1">
+	  <link rel="alternate" type="application/atom+xml" title="" href="http://kenhirakawa.com/atom.xml">
+	  <link rel="stylesheet" href="/assets/css/style.css" type="text/css" />
+	  <link rel="stylesheet" href="/assets/css/syntax.css" type="text/css" />
+	</head>
+	<body>
+	  <div class="post">
+  <header>
+    <a href="/"><img src="/assets/images/profile.jpg"/></a>
+  </header>
+  <h1 id="water-me-please">Water Me, Please!</h1>
+
+<p><em>A tale of how I built a water level sensor to monitor my bamboo’s water supply.  When water is depleted, it tweets ‘WATER ME FOOL’.</em></p>
+
+<figure>
+	<img src="http://kenhirakawa.com/assets/images/water-me-please-bamboo.jpg" />
+	<figcaption>My overgrown bamboo</figcaption>
+</figure>
+
+<p>My bamboo is dying.</p>
+
+<p>I’ve had my bamboo plant ever since I started working at my current company. It’s a nice addition to my office desk, with it being green and all. The problem is, I always forget to water the plant. The yellowed, coiled up leaves are my only reminder. I have no idea how this plant has made it this far.</p>
+
+<h2 id="lets-fix-it">Let’s Fix It</h2>
+
+<p>There are many ways to “fix” this. One could simply set a recurring alarm on a phone every 3 or so weeks, as a reminder to water the bamboo. It’s the easiest route, but there’s certainly no fun involved.</p>
+
+<p>What if the plant told me that it needed water? This <a href="http://www.botanicalls.com/">isn’t a new idea</a>, but I had an Arduino Uno collecting dust. I think it’s time to make use of it.</p>
+
+<h2 id="arduino-to-the-rescue">Arduino to the Rescue</h2>
+
+<p>The requirements for this new system would be simple.</p>
+
+<ol>
+  <li>Accurately notify me when the water level is low</li>
+  <li>Simple to implement</li>
+</ol>
+
+<p>Diving deeper into (1), the system should publish a tweet to its <a href="https://twitter.com/kensplant">feed</a> when it is deprived of water and when its been rescued.</p>
+
+<p>Here’s how I implemented it.</p>
+
+<h3 id="hardware">Hardware</h3>
+
+<p>I read this <a href="http://lifeboatfarm.wordpress.com/2009/12/28/arduino-water-level-gauge/">blog</a> and used their design for the water level sensor. For my design, I’m using one 10kΩ and five 2.2kΩ resistors in series. Here’s the schematic drawing:</p>
+
+<figure>
+	<img src="http://kenhirakawa.com/assets/images/water-me-please-schematic.png" />
+	<figcaption>Design of water sensor</figcaption>
+</figure>
+
+<p>The theory behind this is that when the when the sensor (the five 2.2kΩ resistors) is submerged into water, the sensor gets shorted resulting in a change in voltage.  By measuring this voltage change, we can determine when water level is low.</p>
+
+<p>Sensor measurements are read in through analog sensor A0.  Power is programmatically applied via pin 7 only when measurements are needed. This is to limit electrolysis.</p>
+
+<p>And here’s the prototype:</p>
+
+<figure>
+	<img src="http://kenhirakawa.com/assets/images/water-me-please-prototype.jpg" />
+	<figcaption>The resistors are wrapped around the GND wire to make it more probe-like</figcaption>
+</figure>
+
+<p>It works like a charm.  The raw data readings range from 540 (when it’s dry) to around 350 (when its submerged in water).  The values don’t mean anything.  All the software cares about is when the measurement has surpassed the IM_DYING_GIVE_ME_WATER threshold.  This value is set to 520.</p>
+
+<h3 id="software">Software</h3>
+
+<p>I wrote a node.js script that interfaces with the Arduino to collect readings from the water sensor.  I’ll explain the gist of how the script works here.  For the full source code, checkout my <a href="https://github.com/khirakawa/water-me-please">repo</a>.</p>
+
+<p>The node.js script uses <a href="https://github.com/ecto/duino">duino</a>.  Its a neat, lightweight framework for working with Arduinos in node.js. As per their instructions, I’ve uploaded the <code>src/du.ino</code> sketch onto my Arduino.  Now I can operate the Arduino with javascript. Awesome.</p>
+
+<p>The water sensor code is in <code>lib/sensor.js</code>.  Inside the module you’ll find the <code>WaterLevelSensor</code> class.  When instantiated, this object will create a new <code>arduino.Board</code> object at a baudrate of 9600, set up the analog sensor at pin A0, and set the pin mode of pin 7 to ‘OUT’.  Pin 7 is used to toggle the power to the sensor.  Here’s the code.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// our water level sensor</span>
+<span class="kd">var</span> <span class="nx">WaterLevelSensor</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">debug</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">pin</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">pin</span> <span class="o">||</span> <span class="mi">7</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">sensor_pin</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">sensor_pin</span> <span class="o">||</span> <span class="s1">&#39;A0&#39;</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">baudrate</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">baudrate</span> <span class="o">||</span> <span class="mi">9600</span><span class="p">;</span>
+
+  <span class="c1">// This will be used to determine when to tweet</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">IM_DYING_THRESHOLD</span> <span class="o">=</span> <span class="mi">520</span><span class="p">;</span>
+
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">board</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">arduino</span><span class="p">.</span><span class="nx">Board</span><span class="p">({</span>
+    <span class="nx">baudrate</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">baudrate</span><span class="p">,</span>
+    <span class="nx">debug</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">debug</span>
+  <span class="p">});</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">sensor</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">arduino</span><span class="p">.</span><span class="nx">Sensor</span><span class="p">({</span>
+    <span class="nx">board</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">board</span><span class="p">,</span>
+    <span class="nx">pin</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">sensor_pin</span><span class="p">,</span>
+    <span class="nx">throttle</span><span class="o">:</span> <span class="mi">100</span>
+  <span class="p">});</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">board</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;ready&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// set pin to out mode</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">board</span><span class="p">.</span><span class="nx">pinMode</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">pin</span><span class="p">,</span> <span class="s1">&#39;out&#39;</span><span class="p">);</span>
+
+    <span class="nx">self</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;ready&#39;</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span></code></pre></div>
+
+<p>In order for the object to emit an event on the ready state, it must inherit <code>events.EventEmitter</code>.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// make it emitterable</span>
+<span class="nx">util</span><span class="p">.</span><span class="nx">inherits</span><span class="p">(</span><span class="nx">WaterLevelSensor</span><span class="p">,</span> <span class="nx">events</span><span class="p">.</span><span class="nx">EventEmitter</span><span class="p">);</span></code></pre></div>
+
+<p>Finally, it defines the measure method.  The code powers the sensor by setting pin 7 to HIGH and then takes the mean average of five measurements.  The final value is passed to a callback.  Lastly, power pin (7) is set to LOW to power off the sensor.  This is important because we don’t want DC current to continuously flow through the resistors in the water and cause corrosion via electrolysis.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// measures for 5 reads and calls callback with average value</span>
+<span class="nx">WaterLevelSensor</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">measure</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+    <span class="nx">readCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nx">measurements</span> <span class="o">=</span> <span class="p">[];</span> <span class="c1">// running list of measurements</span>
+
+  <span class="c1">// send 5V to pin to enable sensor</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">board</span><span class="p">.</span><span class="nx">digitalWrite</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">pin</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">board</span><span class="p">.</span><span class="nx">HIGH</span><span class="p">);</span>
+
+  <span class="c1">// read from sensor</span>
+  <span class="kd">var</span> <span class="nx">readCallback</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">measurements</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="mi">10</span><span class="p">));</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">measurements</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">median</span> <span class="o">=</span> <span class="nx">getMedian</span><span class="p">(</span><span class="nx">measurements</span><span class="p">);</span>
+
+      <span class="c1">// reset mode</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">board</span><span class="p">.</span><span class="nx">digitalWrite</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">pin</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">board</span><span class="p">.</span><span class="nx">LOW</span><span class="p">);</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">sensor</span><span class="p">.</span><span class="nx">removeListener</span><span class="p">(</span><span class="s1">&#39;read&#39;</span><span class="p">,</span> <span class="nx">readCallback</span><span class="p">);</span>
+
+      <span class="c1">// we&#39;re finished, evoke the callback</span>
+      <span class="nx">callback</span><span class="p">(</span><span class="nx">median</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">sensor</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;read&#39;</span><span class="p">,</span> <span class="nx">readCallback</span><span class="p">);</span>
+<span class="p">};</span></code></pre></div>
+
+<p>Here’s an example of how the <code>WaterLevelSensor</code> object is used.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">sensor</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WaterLevelSensor</span><span class="p">();</span>
+
+<span class="c1">// on ready state</span>
+<span class="nx">sensor</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;ready&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+    <span class="nx">sensor</span><span class="p">.</span><span class="nx">measure</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// If the value exceeds threshold, tweet.</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">value</span> <span class="o">&gt;</span> <span class="nx">sensor</span><span class="p">.</span><span class="nx">IM_DYING_THRESHOLD</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// tweet it</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">},</span> <span class="mi">300000</span><span class="p">);</span> <span class="c1">// measure every 5 minutes</span>
+<span class="p">});</span></code></pre></div>
+
+<p>There you have it.  A homemade Botanicalls made from a bunch of resistors, jumper wires, an Arduino, and node.js.</p>
+
+<figure>
+	<img src="http://kenhirakawa.com/assets/images/water-me-please-final.jpg" />
+	<figcaption>Water level sensor in action</figcaption>
+</figure>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>Although the code does its best to limit corrosion, the resistors are still exposed to the elements and will naturally corrode.  Unfortunately, the resistors on my sensor have already rusted due to extensive testing of the sensor (still works though!).  An alternative method would be to use ultra-sound sensing or capacitive sensing.  That’ll be a topic worthy of its own project.  For now, I’m happy with what I’ve made.</p>
+
+<p>Happy coding!</p>
+
+  <footer>
+		<div class="published-date">March 10, 2013</div>
+	  
+		<div id="disqus_thread"></div>
+		<script type="text/javascript">
+	        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+	        var disqus_shortname = 'kenhirakawa'; // required: replace example with your forum shortname
+
+	        // so that comments load on localhost
+	        var disqus_url = 'http://kenhirakawa.com/water-me-please';
+
+
+	        /* * * DON'T EDIT BELOW THIS LINE * * */
+	        (function() {
+	            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	        })();
+	    </script>
+	    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+	    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+	  
+  </footer>
+</div>
+
+
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-39116079-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+	</body>
+</html>

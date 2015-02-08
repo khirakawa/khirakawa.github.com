@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+	<head>
+	  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	  <title>Forward 2 Notes - Part 2</title>
+	  <meta name="author" content="Ken Hirakawa" />
+
+	  <meta name=viewport content="width=device-width, initial-scale=1">
+	  <link rel="alternate" type="application/atom+xml" title="" href="http://kenhirakawa.com/atom.xml">
+	  <link rel="stylesheet" href="/assets/css/style.css" type="text/css" />
+	  <link rel="stylesheet" href="/assets/css/syntax.css" type="text/css" />
+	</head>
+	<body>
+	  <div class="post">
+  <header>
+    <a href="/"><img src="/assets/images/profile.jpg"/></a>
+  </header>
+  <h1 id="forward-2-notes---part-2">Forward 2 Notes - Part 2</h1>
+
+<p><em>This post is a continuation from my earlier post, <a href="/forward-notes-1">Foward 2 Notes - Part 1</a></em></p>
+
+<figure>
+  <img src="http://kenhirakawa.com/assets/images/forward-swag.jpg" />
+  <figcaption>Swaaag!</figcaption>
+</figure>
+
+<p>Here are the talks I attended:</p>
+
+<ol>
+  <li>Keynote by Karolina Szczur and Sarah Groff-Paermo</li>
+  <li>The Better Parts, Douglas Crockford</li>
+  <li>What the… JavaScript?, Kyle Simpson</li>
+  <li>We Will All Be Game Programmers, Hunter Loftis</li>
+  <li>No More Tools, Karolina Szczur</li>
+  <li>Developing High Performance Websites and Modern Apps with JavaScript and HTML5, Doris Chen</li>
+  <li>Love &amp; Node, Sarah Groff-Palermo</li>
+  <li>Developer Led Innovation, James Sacra</li>
+  <li>Choosing a JavaScript Framework, Pam Selle</li>
+  <li>Test-driven client-side apps, Pete Hodgson</li>
+</ol>
+
+<p>This post will have notes on the remaining talks starting with Hunter Loftis.  Enjoy!</p>
+
+<h2 id="we-will-all-be-game-developers-hunter-loftis">We Will All Be Game Developers, Hunter Loftis</h2>
+
+<p>3 weeks to build out an FPS game in HTML5 for an internationally releasing album.</p>
+
+<p>Issues</p>
+
+<ol>
+  <li>Budget (cheap), because the marketing people found Hunter really late, and so they had little left</li>
+  <li>3 weeks</li>
+  <li>Technical constraints (must work on iPhone, iPad, Android &amp; Desktop!)</li>
+</ol>
+
+<p>Sure! sounds like an awesome project.  Why not help these “no-name” artists.
+But… Apparently the guy behind the album is a big artist in the UK, and Hunter was the no-name artist.  Pressure!
+For the next three weeks, no sleep.</p>
+
+<p>“Optimism is an occupational hazard of programming” - Kent Beck</p>
+
+<h3 id="demo">Demo</h3>
+
+<figure>
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/iBOvh-xlctY" frameborder="0" allowfullscreen=""></iframe>
+  <figcaption>Demo of game built in 3 weeks</figcaption>
+</figure>
+
+<ul>
+  <li>Looks a lot like minecraft</li>
+  <li>The cool part is that if you get lost in the maze, it plays the sound track “Lost”</li>
+  <li>Got a Kotaku article out of it as well.  Now technically a “game developer”</li>
+</ul>
+
+<h3 id="why-should-you-care">Why should You Care?</h3>
+
+<ul>
+  <li>Application interfaces are becoming more like games</li>
+  <li>JS developers aren’t strong in game development.  But the tech industry is moving towards game like interfaces with Holograph, VR, leap motion, etc</li>
+  <li>Building a simple game like pong is a lot harder than most complicated applications</li>
+</ul>
+
+<h3 id="ideas-from-game-dev-for-better-user-interfaces">3 Ideas from Game Dev for Better User Interfaces</h3>
+
+<p>Let’s steal from game dev community</p>
+
+<p><em>1. Minimize and isolate state.</em></p>
+
+<ul>
+  <li>State is the root of all evil</li>
+  <li>JS makes it easy to add type to anything</li>
+  <li>Game devs don’t have much luxury.  Compare Todolists VS Call of Duty.  There’s much more state to manage and yet they get 60 fps.  Minimizing state is important for complex applications</li>
+</ul>
+
+<p>For a simple game of a guy walking around, we might need to keep track of:</p>
+
+<ul>
+  <li>direction</li>
+  <li>XY coordinates</li>
+  <li>velocity</li>
+  <li>If he runs fast, kick off dust…</li>
+</ul>
+
+<p>We can all capture all that with just these:</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">Player</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">interval</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">distance</span>
+<span class="p">}</span></code></pre></div>
+
+<p>And a set of pure functions.  Given an input -&gt; Always the same output.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">velocity</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getVelocity</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">state</span><span class="p">.</span><span class="nx">interval</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">direction</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDirection</span><span class="p">(</span><span class="nx">velocity</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">pose</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getPose</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">distance</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">frame</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">(</span><span class="nx">direction</span><span class="p">,</span> <span class="nx">post</span><span class="p">);</span></code></pre></div>
+
+<p>No side effects. The point is to figure out where the state is, and then use pure functions to derive the rest.</p>
+
+<p><em>2. Enforce deterministic rendering (frames should be independent)</em></p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">render</span><span class="p">(</span><span class="nx">seconds</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">renderer</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="nx">seconds</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getState</span><span class="p">());</span>
+<span class="p">}</span></code></pre></div>
+
+<p>It would be a lot easier to do undo / redo if we kept a history of states, instead of modifying a state object directly.  (again, FP and immutability is a big hot topic at Forward.)</p>
+
+<p>Keep state independent of rendering.  React is great at doing this.  React works like a game engine and supports isomorphic JS</p>
+
+<p><em>3. Separating rendering and simulation</em></p>
+
+<p>Simulation leads to good animation.</p>
+
+<p>The pursuit of 60fps</p>
+
+<p>Compared to:</p>
+
+<ul>
+  <li>cinema: 24fps</li>
+  <li>with blur: 18fps</li>
+  <li>fighter pilos: 220 fps!!</li>
+</ul>
+
+<p>If you’re delivering any online experience, optimize for 60 fps</p>
+
+<ul>
+  <li><code>setInterval(frame, 0)</code> is bad</li>
+  <li><code>setInterval(frame, 17)</code> is better, but does not guarantee that the frame method runs at the next frame</li>
+  <li><code>requestAnimationFrame(frame)</code> is better, but is not fully guaranteed because you can still drop frames.  If that virus scanner runs while your game is running, your game might drop frames.</li>
+</ul>
+
+<p>Instead, what you want to do is decouple rendering and simulation. If you drop a frame, you track it.  For every frame you drop, you simulate it.  Drop 2 frames, simulate it twice.  This way, you get the same exact behavior, regardless of dropped frames.</p>
+
+<h3 id="my-favorite-bug">My favorite bug</h3>
+
+<figure>
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/eJlifh_N1ec" frameborder="0" allowfullscreen=""></iframe>
+  <figcaption>Created a git tag just for finding this bug.</figcaption>
+</figure>
+
+<h3 id="kens-thoughts">Ken’s Thoughts</h3>
+
+<p>What he said about TODOMVC makes a lot of sense… We fuss over which framework to use to build such a simple TODOMVC, yet game developers are building complex worlds and game mechanics all in 60 fps.</p>
+
+<h2 id="no-more-tools-karolina-szczur">No More Tools, Karolina Szczur</h2>
+
+<p>Have we reached a tipping point with too many tools? A look at up-to-date front-end tooling and better ideas for teamwork</p>
+
+<h3 id="tools">Tools</h3>
+
+<p>Tool - we have a plethora of tools to use to help us make our lives easier, but is that always the case?</p>
+
+<p>“Creatives aren’t good at their art because of their tools; their talent stems from the skills and knowledge they’ve acquired while using their tools” - The Good Creative - Paul Jarvis</p>
+
+<p>But tools are still good to use.  Which frameworks / tools are good and what will eventually break our heart?</p>
+
+<p>Things to think about</p>
+
+<ul>
+  <li>Simplicity.  Two types of simple.  Visual simple - does it look simple to use?  Operational simplicity - is it easy to use</li>
+  <li>Does it allow us to single-thread our attention?  Most crucial skill is to not multi-task, but single-threading our attention.</li>
+  <li>Complexity.  The time it takes to learn something.  Tesler’s Law of Conservation of Simplicity.  The strive for simplicity is superficial because at times, complexity is necessary.  Its a fact of the world and simplicity is in the mind.</li>
+</ul>
+
+<h3 id="automation">Automation</h3>
+
+<p>Automation gives us time to work on problems that cannot be delegated to scripts</p>
+
+<p><em>Tools</em></p>
+
+<ul>
+  <li>Autoprefixer - worry-free vendor prefixing</li>
+  <li>Linting - check for bad patterns</li>
+  <li>Media Optimisation - strip unnecessary bytes.</li>
+  <li>Minification - strip unnecessary characters</li>
+  <li>Code bloat - might might not be useful.  Search and remove unused declarations</li>
+  <li>Testing performance - find specific elements hindering performance</li>
+  <li>Debugging layout issues - find problems with the box model. pesticide.io</li>
+  <li>GUIs for automation - Hammer format, codekit, livereload</li>
+</ul>
+
+<p><em>NPM</em></p>
+
+<ul>
+  <li>NPM is a way to run scripts as well.  Its a native ecosystem for task automation.</li>
+  <li>Some people think npm for front-packaging isn’t good enough, but “npm loves you, front-enders, and we are about your use cases.”</li>
+  <li>bit.ly/leveldb-example</li>
+  <li>bit.ly/npm-task-automation</li>
+</ul>
+
+<p><em>Gulp &amp; Grunt</em></p>
+
+<ul>
+  <li>Alternatives to make</li>
+  <li>Gulp might be better for node people because it uses streams.</li>
+  <li>Grunt is more configuration over coding.</li>
+  <li>Which is better? Matter of preference.  She seems to prefer Gulp</li>
+</ul>
+
+<p><em>Make</em></p>
+
+<ul>
+  <li>Why not use make? People tend to forget about it, but make is quite powerful</li>
+  <li>bit.ly/buidling-static</li>
+</ul>
+
+<h3 id="when-to-do-what">When to do what?</h3>
+
+<ul>
+  <li>When should we minify code?</li>
+  <li>A Case for minifying and committing the minified code. -&gt; Allows people without minification tools to use your scripts</li>
+</ul>
+
+<h3 id="collaboration">Collaboration</h3>
+
+<ul>
+  <li>The tools are there to empower ourselves.</li>
+  <li>Collaboration happens when our own set of biases doesn’t cloud judgement.  Tools are a way</li>
+</ul>
+
+<h2 id="developing-high-performance-websites-and-modern-apps-with-js-and-html5-doris-chen">Developing High Performance Websites and Modern Apps with JS and HTML5, Doris Chen</h2>
+
+<h3 id="game---how-to-make-it-run-faster">Game - How to make it run faster</h3>
+
+<p>This talk is about the principles to improving the JS performance of your app</p>
+
+<p>Today, we’ll improve a game called High Five Yeah. The more you get high fives, the more points you get.</p>
+
+<figure>
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/JIbXwJ8gt3c" frameborder="0" allowfullscreen=""></iframe>
+  <figcaption>High Five Yeah!</figcaption>
+</figure>
+
+<p>Components and control flow of the game</p>
+
+<ol>
+  <li>Matrix of players</li>
+  <li>Each player has a set of directions</li>
+  <li>On touch select a player</li>
+  <li>Generate a list of neighbors to rotate</li>
+  <li>Rorate the player</li>
+  <li>Repeat from step 4</li>
+</ol>
+
+<p>The game allocates lots of memory if you increase the size of the grid.</p>
+
+<p>Always measure</p>
+
+<ul>
+  <li>profile the game.</li>
+  <li>Define the criteria of what “fast enough” is first. You can use IE, but feel free to use other tools.</li>
+  <li>IE developer tool has a tab called responsiveness.  It gives you a chart of FPS and CPU usage.</li>
+  <li>The three important measurements - CPU (tied to battery life), GPU, and FPS.</li>
+  <li>Similar to chrome, IE dev tools gives you color coded results - yellow for layout, green for css style calculations, etc.</li>
+  <li>The goal is to have a flat 60 fps, no dips in the charts.</li>
+</ul>
+
+<h3 id="principle-1-memory-usage---stay-lean">Principle 1: Memory usage - Stay Lean</h3>
+
+<ul>
+  <li>Every call to new or implicit memory allocation reserves GC memory - allocations are cheap until current pool is exhausted.  Every time the GV happens, we will see some obvious pauses</li>
+  <li>When pool is exhausted, engines force a collection</li>
+</ul>
+
+<p>Best practices for staying lean</p>
+
+<ul>
+  <li>Avoid unnecessary object creation</li>
+  <li>Look at object creation pattern.  Use object pools when possible.</li>
+  <li>Be aware of allocation patterns, such as Setting closures to event handlers.</li>
+</ul>
+
+<h3 id="principle-2-use-fast-object-types-and-manipulations">Principle 2: Use Fast Object Types and Manipulations</h3>
+
+<ul>
+  <li>In JS the order of a hash map matters.  It is better to keep the “shape” the same.  For example. <code>var a = {}; a.north = 1; a.south = 0;</code> and <code>var b = {}; b.south = 0; b.north = 1</code> do not share the same “shape”</li>
+  <li>Avoid creating slower property bags.  Don’t use getters and setters for perf critical paths.  For example, its probably better to use <code>this.n = north</code> instead of doing</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">nVal</span><span class="p">;}</span>
+<span class="p">})</span></code></pre></div>
+
+<ul>
+  <li>Use simple objects for perf critical paths</li>
+  <li>Never use <code>delete</code>, it is sloooow</li>
+</ul>
+
+<h3 id="principle-3-best-practices-for-fast-arithmetic">Principle 3: Best Practices for Fast Arithmetic</h3>
+
+<ul>
+  <li>Use 31-bit integer math when possible.  31 will go onto the stack, but a 32 float will not.  It needs to move to a slower, long term storage.</li>
+  <li>Avoid floats if they are not needed</li>
+  <li>Design for type specialized arithmetic.  Try to separate floating arithmetic from integer arithmetic</li>
+</ul>
+
+<h3 id="principle-4-do-less-work">Principle 4: Do Less Work</h3>
+
+<p>Avoid chattiness with the DOM</p>
+
+<p>BAD</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">get</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">).</span><span class="nx">classList</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">oldClass</span><span class="p">)</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">get</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">).</span><span class="nx">classList</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">newClass</span><span class="p">)</span></code></pre></div>
+
+<p>GOOD</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">get</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">).</span><span class="nx">classList</span><span class="p">;</span>
+
+<span class="nx">el</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">oldClass</span><span class="p">);</span>
+<span class="nx">el</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">newClass</span><span class="p">)</span></code></pre></div>
+
+<p>If you know a value is a integer, such as when <code>this.borderSize = domelement.getBorderSize</code>, it is better to <code>parseInt</code> it.  25% better performance in marshaling.</p>
+
+<p>Paint as much as your users can see, which is 60 FPS</p>
+
+<ul>
+  <li>BAD <code>setTimeout(animate, 0)</code> &lt;- this is more work because its trying to animate too many times.</li>
+  <li>BETTER <code>requestAnimationFrame(animate)</code> &lt;- let the browser determine when to animate</li>
+</ul>
+
+<h3 id="key-take-away">Key Take Away</h3>
+
+<p>For super performance critical code, we can do a lot of micro optimizations to make performance better.  Better performance = longer battery life,</p>
+
+<h2 id="love--node-sarah-groff-palermo">Love &amp; Node, Sarah Groff-Palermo</h2>
+
+<p>This is the second part to her key note about relatables - objects that allow us to explore the relationship between people and objects</p>
+
+<h3 id="creating-relatability">Creating Relatability</h3>
+
+<p>How do we create a robot that is relatable?</p>
+
+<p>There are 6 ways</p>
+
+<ol>
+  <li>Give it a face.  From a very young age, humans are learned to detect faces.  <a href="https://twitter.com/facepics">@facepics</a></li>
+  <li>Sense of agency</li>
+  <li>Social behavior - teaching objects to remember.</li>
+  <li>Make the robot unpredictable.  gives the feeling of personality</li>
+  <li>Creating a sense of helplessness.  Helps people feel less lonely.</li>
+  <li>Objects that mimic us. If I turn my head and it turns its head then we like it.</li>
+</ol>
+
+<h3 id="process">Process</h3>
+
+<p>How does one create a robot? Her process.</p>
+
+<p>Take input -&gt; Do something with it (the gear) -&gt; Output</p>
+
+<p><em>1. Take input</em></p>
+
+<ul>
+  <li>Information to take in, who is nearby, how are you feeling, which books haven’t I read?</li>
+  <li>Tools to use - proximity (IR and ultrasonic), climate temp and humidity,
+ambient (light and sound), bluetooth, gas, accelerometer, motion, touch (capacitive and pressure) sensors.</li>
+</ul>
+
+<p><em>2. The gear</em></p>
+
+<ul>
+  <li>Turn inputs into outputs.  Tessel, Arduino, and RPi.</li>
+  <li>Arduino - C derived Arduino language.  Node via Johnny 5, DIY / Sheilds
+Tessel - Node, wifi builtin, high-level modules</li>
+  <li>Both have awesome communities</li>
+</ul>
+
+<p><em>3. Outputs</em></p>
+
+<p>Possible outputs</p>
+
+<ul>
+  <li>regular LEDS</li>
+  <li>addressable LEDS</li>
+  <li>motors</li>
+  <li>servors speakers</li>
+</ul>
+
+<h3 id="projects">Projects</h3>
+
+<ul>
+  <li>FriendBot - Built at SFPC</li>
+  <li>Neo-Neglect - Books that have emotion.  If it isn’t read for a while, it screams “You’re a monster!”</li>
+  <li>Spiny - Actually a failure, but its always a good thing to love all our monsters</li>
+  <li>Deluge - The feelings of being overwhelmed.  Senses BT signals in a room and visualizes it</li>
+</ul>
+
+<h3 id="questions-and-demos">Questions and Demos</h3>
+
+<figure>
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/6hP8DLuN1Ps" frameborder="0" allowfullscreen=""></iframe>
+  <figcaption>FriendBot being friendly</figcaption>
+</figure>
+
+<h2 id="developer-led-innovation-james-sacra">Developer Led Innovation, James Sacra</h2>
+
+<h3 id="failure">Failure</h3>
+
+<ul>
+  <li>Developed new prototype for voice recognition in 3 months and ready to blow manager minds away</li>
+  <li>Got embarrassed at a call with sales people.  Turns out users didn’t want the prototype he developed.</li>
+</ul>
+
+<p>How did he fail?</p>
+
+<ul>
+  <li>He didn’t understand the key problem</li>
+  <li>He didn’t explain the solution</li>
+  <li>He didn’t gain traction</li>
+</ul>
+
+<h3 id="steps-to-getting-your-idea-heard">Steps to Getting Your Idea Heard</h3>
+
+<p>Step 0: Need a friend (ally).
+- Someone to support your ideas.  They can help you push your ideas from a unique perspective.
+- Who should you befriend? Fellow developers, technical managers, business support, etc.  Grab them over lunch, talk to them</p>
+
+<p>Step 1: What’s the problem?</p>
+
+<ul>
+  <li>In order to innovate you must understand the problem.  Its not about, oh I want to use D3!</li>
+  <li>Quantify - 20% of customers are negatively impacted?  What is the probem and how do you quantify it?</li>
+  <li>At the same time, its important to keep developers happy and NOT use a technology from 10 years ago.</li>
+</ul>
+
+<p>Step 2: Innovate</p>
+
+<ul>
+  <li>Think tank! Innovate. Hackathons.  This can even be a 3, 4 hour meeting with key people.</li>
+  <li>Prototyping - gives you answers you need in next step, a great demo, and flushes out a lot problems</li>
+</ul>
+
+<p>Step 3: Define the solution</p>
+
+<ul>
+  <li>Quantify the solution - “We developed a prototype in half the time than we could in the existing framework”</li>
+  <li>Keyword is “we”.</li>
+  <li>People usually don’t realize minor performance issues until they see numbers.</li>
+</ul>
+
+<p>Step 4: Pitch</p>
+
+<ul>
+  <li>Make a presentation.  Include your assessment of the problem, impact to the business, and the solution.  It will help you think through questions that wil be asked and might even lead you to do more research</li>
+  <li>Technical initiatives - at this point you should have a strong case for why you idea needs to be heard.  And if you’re not being heard, go back to step 0</li>
+</ul>
+
+<h3 id="troubleshooting">Troubleshooting</h3>
+
+<ul>
+  <li>“No matter what I do… I can’t get someone to listen”.  This is just an excuse.  You haven’t put in the effort to be heard.</li>
+  <li>“We don’t have enough available resources to innovate”. No, you do.  During lunch or meetings or whatever, find the time</li>
+</ul>
+
+<h3 id="key-take-away-1">Key Take Away</h3>
+
+<p>Don’t be afraid to fail, that is the only way to succeed</p>
+
+<h2 id="choosing-a-javascript-framework-pam-selle">Choosing a Javascript Framework, Pam Selle</h2>
+
+<p>There’s a <a href="http://shop.oreilly.com/product/9781939902085.do">book</a>!</p>
+
+<p>Spoiler: I will not tell you what to do.
+The hope is for you to make informed decisions for a project</p>
+
+<h2 id="what-is-a-js-framework">What is a JS framework?</h2>
+
+<ul>
+  <li>Most framework were built in 2009 / 2010 - “Oh I found that I was building the same thing over and over again for consultants so I figured, I should build my own!”</li>
+  <li>Frameworks are good because you shouldn’t have to write boilerplate code.</li>
+  <li>Ask yourself, what’s our 15% (the thing that is not boilerplate, and makes your app special)  Then find the framework that makes you go fast</li>
+</ul>
+
+<h3 id="backbone">Backbone</h3>
+
+<ul>
+  <li>Backbone comes from a Rails world</li>
+  <li>It’s the “core” of an application</li>
+  <li>It’s un-opiniated. Generally more flexible. e.g. incorporating other libraries.  This is both a strength and a weakness</li>
+  <li>Has models, views, collections, events, and routing</li>
+  <li>It’s quite intuitive to get started</li>
+</ul>
+
+<h3 id="angular">Angular</h3>
+
+<ul>
+  <li>Fastest growing JS framework…</li>
+  <li>Directives! and Google!</li>
+  <li>Strongly defined building components (directives, controllers, services)</li>
+  <li>Dependency injection</li>
+  <li>Two way bindings</li>
+  <li>Karma and protractor for testing</li>
+  <li>No dependencies</li>
+  <li>Strengths - once you know what you are doing, there’s less to write.  Long feature list.  Module-friendly.  Google backing</li>
+  <li>Weaknesses - not as battle tested.  High lock-in with writing behavior in markup.  Skeptical about Google backing.  2.0 drops backwards compatibility</li>
+  <li>Has Modules, Directives, Services, Controllers, and other components like Filters, animations, i18n, l10n</li>
+</ul>
+
+<h3 id="ember">Ember</h3>
+
+<ul>
+  <li>Most complete JS framework (not necessarily the best).  Used for really intense client side applications</li>
+  <li>Built completely on modular open source components</li>
+  <li>Community super-powered</li>
+  <li>Very strongly defined MVC components</li>
+  <li>two way data binding</li>
+  <li>Ember components (like directives or web components)</li>
+  <li>dependency injection</li>
+  <li>Routing</li>
+  <li>Dependencies - ember-data, jQuery, handlebars</li>
+  <li>Strengths - convention driven like rails, the community!</li>
+  <li>Weaknesses - Sometimes TOOO much information, the “right” way to do things = difficult to get up to speed quickly, lots of rules, not as pervasive as other two frameworks</li>
+</ul>
+
+<p>Rising stars!</p>
+
+<h3 id="react">React</h3>
+
+<ul>
+  <li>React is like git diffs for browser rendering</li>
+  <li>Super performant</li>
+  <li>The view of MV*</li>
+</ul>
+
+<h3 id="polymerjs">PolymerJS</h3>
+
+<ul>
+  <li>Web components!</li>
+</ul>
+
+<h3 id="evaluating-frameworks">Evaluating frameworks</h3>
+
+<ul>
+  <li>TODOMVC</li>
+  <li>bit.ly/lg6kDSS - ranking for spreadsheets</li>
+  <li>Rank frameworks according to bsuiness, tehcnical, and team criteria</li>
+  <li>DevTap - technological evaluations</li>
+</ul>
+
+<h2 id="test-driven-client-side-apps-pete-hogsdon">Test Driven Client-side Apps, Pete Hogsdon</h2>
+
+<h3 id="test-driven-development">Test driven development</h3>
+
+<ol>
+  <li>Write a failing test</li>
+  <li>Write code that makes it pass</li>
+  <li>Refactor code (people miss this part a lot)</li>
+  <li>Go back to 1</li>
+</ol>
+
+<p>The whole point is to build out a test suite that gives you the safety net to go
+and refactor your code to make it better</p>
+
+<h3 id="whats-the-advantage-of-tdd">What’s the Advantage of TDD?</h3>
+
+<ul>
+  <li>Feedback! TDD gives repeated, consistent, direction on a granular level as to
+if your code works as you specified it.</li>
+  <li>Feedback on the design of your code.  It makes you write code that is easier to test</li>
+  <li>Easily testable code makes it easier to work with.  “This code is hard to test” === “This code is hard to work with”</li>
+</ul>
+
+<h3 id="live-coding---example-of-tdd">Live Coding - Example of TDD</h3>
+
+<ul>
+  <li><a href="nxtbrt.com">nxtbrt.com</a> - single page app with list of BART departures.</li>
+  <li>LIVE CODING - went through the above four steps to demonstrate power of TDD.</li>
+  <li>We all want to rewrite a code base without any tests.  We don’t make things better every time because we dont have the confidence to do it. TDD gives you that confidence.</li>
+  <li>Feed back is rapid, focussed, and accurate.</li>
+</ul>
+
+<h3 id="functional-testing">Functional testing</h3>
+
+<ul>
+  <li>The feedback you get back with functional testing is not as helpful because the scope is larger with FT.  Especially if the functional test is testing an app with external dependencies such as HTTP and DOM.</li>
+  <li>The key principle with unit tests is that we test an isolated unit of code.  We get faster, more accurate feedback.</li>
+  <li>Doesn’t mean functional testing is bad though.</li>
+</ul>
+
+<h3 id="key-take-away-2">Key Take Away</h3>
+
+<p>TDD drives developers toward better design</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>And that’s it folks! Hope you got a glimpse of what Forward 2 was like.  It will be interesting to look back to this post 10 years from now and see how JavaScript has moved forward.  What I’d like to know is, will JavaScript still be the monopoly client-side language it is today?  My gut feeling tells me that it will, and will be for a good long time.</p>
+
+  <footer>
+		<div class="published-date">February 08, 2015</div>
+	  
+		<div id="disqus_thread"></div>
+		<script type="text/javascript">
+	        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+	        var disqus_shortname = 'kenhirakawa'; // required: replace example with your forum shortname
+
+	        // so that comments load on localhost
+	        var disqus_url = 'http://kenhirakawa.com/forward-notes-2';
+
+
+	        /* * * DON'T EDIT BELOW THIS LINE * * */
+	        (function() {
+	            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	        })();
+	    </script>
+	    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+	    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+	  
+  </footer>
+</div>
+
+
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-39116079-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+	</body>
+</html>
